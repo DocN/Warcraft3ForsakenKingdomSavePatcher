@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -10,5 +10,7 @@
 
   <ItemGroup>
     <Content Include="Engine\**\*.mjs;Engine\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Engine\node.exe" Condition="'$(PublishSingleFile)' == 'true'" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
+

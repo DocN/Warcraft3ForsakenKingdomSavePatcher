@@ -37,13 +37,15 @@ public partial class Form1 : Form
             log.Clear();
             try
             {
-                var start = new System.Diagnostics.ProcessStartInfo("node.exe")
+                var engine = Path.Combine(Path.GetDirectoryName(typeof(Form1).Assembly.Location)!, "Engine");
+                var bundledNode = Path.Combine(engine, "node.exe");
+                var start = new System.Diagnostics.ProcessStartInfo(File.Exists(bundledNode) ? bundledNode : "node.exe")
                 {
                     UseShellExecute = false, CreateNoWindow = true,
                     RedirectStandardOutput = true, RedirectStandardError = true,
                     StandardOutputEncoding = System.Text.Encoding.UTF8
                 };
-                start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "Engine", "batch.mjs"));
+                start.ArgumentList.Add(Path.Combine(engine, "batch.mjs"));
                 start.ArgumentList.Add(folder.Text);
                 using var process = System.Diagnostics.Process.Start(start) ?? throw new IOException("Could not start Node.js.");
                 var errors = process.StandardError.ReadToEndAsync();
@@ -52,8 +54,9 @@ public partial class Form1 : Form
                 log.AppendText(await errors);
                 if (process.ExitCode != 0) log.AppendText("Review the errors above before retrying.");
             }
-            catch (Exception ex) { log.AppendText(ex.Message + Environment.NewLine + "The converter requires Node.js 22 or later on PATH."); }
+            catch (Exception ex) { log.AppendText(ex.Message); }
             finally { choose.Enabled = true; patch.Enabled = true; }
         };
     }
 }
+
